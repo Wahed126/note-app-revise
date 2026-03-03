@@ -14,6 +14,36 @@ const loadNotes = () => {
   }
 };
 
+const DateTimeDisplay = () => {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const time = now.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  const date = now.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  return (
+    <div className="text-right">
+      <p className="text-2xl font-semibold text-gray-700 tracking-tight">{time}</p>
+      <p className="text-sm text-gray-400 mt-0.5">{date}</p>
+    </div>
+  );
+};
+
 const App = () => {
   const [notes, setNotes] = useState(loadNotes);
 
@@ -50,9 +80,12 @@ const App = () => {
         </div>
 
         {/* Main content */}
-        <div className="flex-1 bg-white p-6">
+        <div className="flex-1 bg-white p-6 flex flex-col">
           <Header title="My ToDos" />
           <NoteForm onAdd={addNote} />
+          <div className="mt-auto pt-6">
+            <DateTimeDisplay />
+          </div>
         </div>
       </div>
     </div>
