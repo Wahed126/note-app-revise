@@ -1,10 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import NoteForm from "./components/NoteForm";
 import Sidebar from "./components/Sidebar";
 
+const STORAGE_KEY = "note-app-tasks";
+
+const loadNotes = () => {
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+
 const App = () => {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(loadNotes);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  }, [notes]);
 
   const addNote = (note) => {
     setNotes((prev) => [{ ...note, completed: false }, ...prev]);
