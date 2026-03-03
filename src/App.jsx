@@ -84,7 +84,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-4xl min-h-screen sm:min-h-[90vh] flex rounded-2xl shadow-sm overflow-hidden">
         {/* Sidebar */}
         <div className="w-[320px] shrink-0 bg-gray-50 border-r border-gray-200">
@@ -97,6 +97,9 @@ const App = () => {
           <NoteForm onAdd={addNote} />
           <div className="mt-auto pt-6">
             <DateTimeDisplay />
+            <p className="text-center text-xs text-gray-400 mt-4">
+              All rights reserved <a href="https://github.com/Wahed126" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 underline">@Wahed126</a> &copy;2026
+            </p>
           </div>
         </div>
       </div>

@@ -357,7 +357,34 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
   );
 };
 
+const ITEMS_PER_PAGE = 7;
+
+const ChevronLeftIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+
+const ChevronRightIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+);
+
 const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
+  const [page, setPage] = useState(1);
+  const totalPages = Math.max(1, Math.ceil(notes.length / ITEMS_PER_PAGE));
+
+  // Reset to page 1 if notes shrink below current page
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [notes.length, page, totalPages]);
+
+  const paginatedNotes = notes.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
   return (
     <div className="flex flex-col h-full">
       {/* Sidebar header */}
@@ -389,7 +416,7 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
       </div>
 
       {/* Notes list */}
-      <div className="flex-1 overflow-y-auto px-3 pb-4 space-y-2">
+      <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-2">
         <AnimatePresence initial={false}>
           {notes.length === 0 ? (
             <motion.div
@@ -416,7 +443,7 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
               <p className="mt-3 text-sm">No tasks yet</p>
             </motion.div>
           ) : (
-            notes.map((note) => (
+            paginatedNotes.map((note) => (
               <NoteCard
                 key={note.id}
                 note={note}
@@ -428,6 +455,29 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 px-3 py-3 border-t border-gray-200">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+          >
+            <ChevronLeftIcon />
+          </button>
+          <span className="text-xs text-gray-500 font-medium">
+            {page} / {totalPages}
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+          >
+            <ChevronRightIcon />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
