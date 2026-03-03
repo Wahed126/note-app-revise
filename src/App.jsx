@@ -1,22 +1,47 @@
 import { useState } from "react";
 import Header from "./components/Header";
 import NoteForm from "./components/NoteForm";
+import Sidebar from "./components/Sidebar";
 
-const App=()=>{
+const App = () => {
   const [notes, setNotes] = useState([]);
 
   const addNote = (note) => {
-    setNotes((prev) => [note, ...prev]);
+    setNotes((prev) => [{ ...note, completed: false }, ...prev]);
+  };
+
+  const toggleNote = (id) => {
+    setNotes((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, completed: !n.completed } : n))
+    );
+  };
+
+  const deleteNote = (id) => {
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const updateNote = (id, updates) => {
+    setNotes((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, ...updates } : n))
+    );
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="w-full sm:w-[40%] min-h-screen sm:min-h-[90vh] bg-white rounded-2xl shadow-sm p-6">
-        <Header title="Note App" />
-        <NoteForm onAdd={addNote} />
+      <div className="w-full max-w-4xl min-h-screen sm:min-h-[90vh] flex rounded-2xl shadow-sm overflow-hidden">
+        {/* Sidebar */}
+        <div className="w-[320px] shrink-0 bg-gray-50 border-r border-gray-200">
+          <Sidebar notes={notes} onToggle={toggleNote} onDelete={deleteNote} onUpdate={updateNote} />
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 bg-white p-6">
+          <Header title="Note App" />
+          <NoteForm onAdd={addNote} />
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
