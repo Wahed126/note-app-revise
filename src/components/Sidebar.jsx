@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Pagination from "./Pagination";
 
 const CalendarIcon = ({ size = 14 }) => (
   <svg
@@ -358,18 +359,6 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate, index = 0 }) => {
 
 const ITEMS_PER_PAGE = 7;
 
-const ChevronLeftIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="15 18 9 12 15 6" />
-  </svg>
-);
-
-const ChevronRightIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6" />
-  </svg>
-);
-
 const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
   const [page, setPage] = useState(1);
   const totalPages = Math.max(1, Math.ceil(notes.length / ITEMS_PER_PAGE));
@@ -468,27 +457,7 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 px-3 py-3 border-t border-gray-200">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
-          >
-            <ChevronLeftIcon />
-          </button>
-          <span className="text-xs text-gray-500 font-medium">
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="p-1 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
-          >
-            <ChevronRightIcon />
-          </button>
-        </div>
-      )}
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
 };
