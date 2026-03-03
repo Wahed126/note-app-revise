@@ -8,7 +8,7 @@ const Header = ({ title, className = "" }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight text-center">
+      <h1 className="text-2xl font-semibold text-gray-800 tracking-tight">
         {title}
       </h1>
     </motion.header>

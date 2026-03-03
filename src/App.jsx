@@ -51,7 +51,7 @@ const App = () => {
 
         {/* Main content */}
         <div className="flex-1 bg-white p-6">
-          <Header title="Note App" />
+          <Header title="My ToDos" />
           <NoteForm onAdd={addNote} />
         </div>
       </div>
