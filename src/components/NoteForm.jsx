@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CalendarIcon = () => (
@@ -92,6 +92,18 @@ const NoteForm = ({ onAdd }) => {
 
   const showOptions = isFocused && text.trim().length > 0;
 
+  // Ctrl+K shortcut to focus the input
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!text.trim()) return;
@@ -161,7 +173,7 @@ const NoteForm = ({ onAdd }) => {
           <input
             ref={inputRef}
             type="text"
-            placeholder="Add a task"
+            placeholder="Add a task (Ctrl+K)"
             value={text}
             onChange={(e) => setText(e.target.value)}
             className="flex-1 text-gray-800 placeholder-gray-400 bg-transparent outline-none text-[15px]"

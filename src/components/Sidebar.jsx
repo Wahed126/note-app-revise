@@ -147,6 +147,14 @@ const CATEGORY_COLORS = {
   Study: "bg-violet-100 text-violet-700",
 };
 
+const CATEGORY_BG = {
+  Personal: "bg-sky-50/70 border-sky-200/60",
+  Work: "bg-amber-50/70 border-amber-200/60",
+  Shopping: "bg-pink-50/70 border-pink-200/60",
+  Health: "bg-emerald-50/70 border-emerald-200/60",
+  Study: "bg-violet-50/70 border-violet-200/60",
+};
+
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
