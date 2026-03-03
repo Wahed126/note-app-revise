@@ -176,7 +176,7 @@ const formatReminder = (dateTimeStr) => {
   });
 };
 
-const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
+const NoteCard = ({ note, onToggle, onDelete, onUpdate, index = 0 }) => {
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [editText, setEditText] = useState(note.title);
@@ -221,10 +221,9 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20, transition: { duration: 0.2 } }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0, transition: { delay: index * 0.04, duration: 0.35, ease: [0.25, 0.1, 0.25, 1] } }}
+      exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
       className={`group relative rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-default ${
         note.completed
           ? "bg-gray-50 border border-gray-100 opacity-60"
@@ -417,12 +416,14 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
 
       {/* Notes list */}
       <div className="flex-1 overflow-y-auto px-3 pb-2 space-y-2">
-        <AnimatePresence initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           {notes.length === 0 ? (
             <motion.div
+              key="empty"
               className="flex flex-col items-center justify-center py-16 text-gray-300"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -443,15 +444,25 @@ const Sidebar = ({ notes, onToggle, onDelete, onUpdate }) => {
               <p className="mt-3 text-sm">No tasks yet</p>
             </motion.div>
           ) : (
-            paginatedNotes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                onToggle={onToggle}
-                onDelete={onDelete}
-                onUpdate={onUpdate}
-              />
-            ))
+            <motion.div
+              key={`page-${page}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+              className="space-y-2"
+            >
+              {paginatedNotes.map((note, index) => (
+                <NoteCard
+                  key={note.id}
+                  note={note}
+                  onToggle={onToggle}
+                  onDelete={onDelete}
+                  onUpdate={onUpdate}
+                  index={index}
+                />
+              ))}
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
