@@ -4,6 +4,7 @@ import NoteForm from "./components/NoteForm";
 import Sidebar from "./components/Sidebar";
 import DateTimeDisplay from "./components/DateTimeDisplay";
 import Copyright from "./components/Copyright";
+import StudyTasks from "./components/StudyTasks";
 
 const STORAGE_KEY = "note-app-tasks";
 
@@ -55,6 +56,7 @@ const App = () => {
         <div className="flex-1 bg-white p-6 flex flex-col">
           <Header title="My ToDos" />
           <NoteForm onAdd={addNote} />
+          <StudyTasks notes={notes} onToggle={toggleNote} />
           <div className="mt-auto pt-6">
             <DateTimeDisplay />
             <div className="mt-4">
