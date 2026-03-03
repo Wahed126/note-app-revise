@@ -214,6 +214,10 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
     if (e.key === "Escape") handleCancel();
   };
 
+  const cardBg = note.category && !note.completed
+    ? CATEGORY_BG[note.category] || "bg-white border-gray-200"
+    : "";
+
   return (
     <motion.div
       layout
@@ -221,11 +225,11 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20, transition: { duration: 0.2 } }}
       transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`group relative bg-white border rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-default ${
+      className={`group relative rounded-xl p-3.5 shadow-sm hover:shadow-md transition-all duration-200 cursor-default ${
         note.completed
-          ? "border-gray-100 opacity-60"
-          : "border-gray-200 hover:border-gray-300"
-      }`}
+          ? "bg-gray-50 border border-gray-100 opacity-60"
+          : cardBg || "bg-white border border-gray-200 hover:border-gray-300"
+      } ${!note.completed && cardBg ? "border" : ""}`}
     >
       <div className="flex items-start gap-3">
         {/* Checkbox */}
