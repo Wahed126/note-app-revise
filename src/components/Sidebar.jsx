@@ -122,6 +122,31 @@ const CancelIcon = ({ size = 14 }) => (
   </svg>
 );
 
+const TagIcon = ({ size = 12 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+    <line x1="7" y1="7" x2="7.01" y2="7" />
+  </svg>
+);
+
+const CATEGORY_COLORS = {
+  Personal: "bg-sky-100 text-sky-700",
+  Work: "bg-amber-100 text-amber-700",
+  Shopping: "bg-pink-100 text-pink-700",
+  Health: "bg-emerald-100 text-emerald-700",
+  Study: "bg-violet-100 text-violet-700",
+};
+
 const formatDate = (dateStr) => {
   if (!dateStr) return "";
   const d = new Date(dateStr + "T00:00:00");
@@ -230,9 +255,15 @@ const NoteCard = ({ note, onToggle, onDelete, onUpdate }) => {
             </p>
           )}
 
-          {/* Meta info (date & reminder) */}
-          {(note.dueDate || note.reminder) && !editing && (
+          {/* Meta info (date, reminder & category) */}
+          {(note.dueDate || note.reminder || note.category) && !editing && (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
+              {note.category && (
+                <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${CATEGORY_COLORS[note.category] || "bg-gray-100 text-gray-600"}`}>
+                  <TagIcon size={10} />
+                  {note.category}
+                </span>
+              )}
               {note.dueDate && (
                 <span className="inline-flex items-center gap-1 text-xs text-blue-500">
                   <CalendarIcon size={12} />

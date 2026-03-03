@@ -54,10 +54,37 @@ const CloseIcon = () => (
   </svg>
 );
 
+const TagIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+    <line x1="7" y1="7" x2="7.01" y2="7" />
+  </svg>
+);
+
+const CATEGORIES = [
+  { label: "Personal", color: "bg-sky-100 text-sky-700" },
+  { label: "Work", color: "bg-amber-100 text-amber-700" },
+  { label: "Shopping", color: "bg-pink-100 text-pink-700" },
+  { label: "Health", color: "bg-emerald-100 text-emerald-700" },
+  { label: "Study", color: "bg-violet-100 text-violet-700" },
+];
+
 const NoteForm = ({ onAdd }) => {
   const [text, setText] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [reminder, setReminder] = useState("");
+  const [category, setCategory] = useState("");
+  const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const dateRef = useRef(null);
   const reminderRef = useRef(null);
@@ -73,16 +100,20 @@ const NoteForm = ({ onAdd }) => {
       title: text.trim(),
       dueDate: dueDate || null,
       reminder: reminder || null,
+      category: category || null,
     });
     setText("");
     setDueDate("");
     setReminder("");
+    setCategory("");
+    setShowCategoryPicker(false);
   };
 
   const handleBlur = (e) => {
     // Don't close if clicking inside the form area
     if (e.currentTarget.contains(e.relatedTarget)) return;
     setIsFocused(false);
+    setShowCategoryPicker(false);
   };
 
   const formatDate = (dateStr) => {
@@ -151,9 +182,9 @@ const NoteForm = ({ onAdd }) => {
           </AnimatePresence>
         </div>
 
-        {/* Tags for selected date / reminder */}
+        {/* Tags for selected date / reminder / category */}
         <AnimatePresence>
-          {(dueDate || reminder) && (
+          {(dueDate || reminder || category) && (
             <motion.div
               className="flex flex-wrap gap-2 px-4 pb-2"
               initial={{ opacity: 0, height: 0 }}
@@ -161,6 +192,19 @@ const NoteForm = ({ onAdd }) => {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.15 }}
             >
+              {category && (
+                <span className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full ${CATEGORIES.find(c => c.label === category)?.color || "bg-gray-100 text-gray-600"}`}>
+                  <TagIcon />
+                  {category}
+                  <button
+                    type="button"
+                    onClick={() => setCategory("")}
+                    className="hover:opacity-70 cursor-pointer"
+                  >
+                    <CloseIcon />
+                  </button>
+                </span>
+              )}
               {dueDate && (
                 <span className="inline-flex items-center gap-1.5 text-xs bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">
                   <CalendarIcon />
@@ -244,6 +288,42 @@ const NoteForm = ({ onAdd }) => {
                   tabIndex={-1}
                 />
               </button>
+
+              {/* Category */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setShowCategoryPicker(!showCategoryPicker)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition cursor-pointer ${
+                    category
+                      ? `${CATEGORIES.find(c => c.label === category)?.color || "bg-gray-100 text-gray-600"}`
+                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <TagIcon />
+                  <span>{category || "Category"}</span>
+                </button>
+                {showCategoryPicker && (
+                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
+                    {CATEGORIES.map((cat) => (
+                      <button
+                        key={cat.label}
+                        type="button"
+                        onClick={() => {
+                          setCategory(cat.label);
+                          setShowCategoryPicker(false);
+                        }}
+                        className={`w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 transition cursor-pointer flex items-center gap-2 ${
+                          category === cat.label ? "font-medium" : ""
+                        }`}
+                      >
+                        <span className={`w-2.5 h-2.5 rounded-full ${cat.color.split(" ")[0]}`} />
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
