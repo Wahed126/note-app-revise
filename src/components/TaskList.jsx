@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import Sidebar from "./Sidebar";
 
 const BookIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -47,23 +48,45 @@ const formatReminder = (dateTimeStr) => {
   });
 };
 
-const StudyTasks = ({ notes, onToggle }) => {
-  const studyNotes = notes.filter((n) => n.category === "Study");
+const TaskList = ({ notes, onToggle }) => {
+  if (notes.length === 0) return null;
 
-  if (studyNotes.length === 0) return null;
+  // Import CATEGORY_COLORS from Sidebar
+  const CATEGORY_COLORS = {
+    Personal: "bg-sky-100 text-sky-700",
+    Work: "bg-amber-100 text-amber-700",
+    Shopping: "bg-pink-100 text-pink-700",
+    Health: "bg-emerald-100 text-emerald-700",
+    Study: "bg-violet-100 text-violet-700",
+  };
+
+  // Determine category name and color for heading
+  let categoryName = 'Tasks';
+  let categoryColor = 'text-violet-600';
+  if (notes.length > 0) {
+    const uniqueCategories = Array.from(new Set(notes.map(n => n.category)));
+    if (uniqueCategories.length === 1 && uniqueCategories[0]) {
+      categoryName = uniqueCategories[0] + ' Tasks';
+      categoryColor = CATEGORY_COLORS[uniqueCategories[0]] || 'text-violet-600';
+    } else {
+      categoryName = 'All Tasks';
+      categoryColor = 'text-violet-600';
+    }
+  }
+
+  const remainingCount = notes.filter((n) => !n.completed).length;
 
   return (
     <div className="mt-5">
-      <h3 className="flex items-center gap-1.5 text-sm font-semibold text-violet-600 mb-3">
-        <BookIcon />
-        Study Tasks
-        <span className="text-xs font-normal text-violet-400 ml-1">
-          ({studyNotes.filter((n) => !n.completed).length} remaining)
+      <h3 className="flex items-center gap-1.5 text-sm font-semibold mb-3" >
+        {categoryName}
+        <span className="text-xs font-normal ml-1">
+          ({remainingCount} remaining)
         </span>
       </h3>
       <div className="grid grid-cols-2 gap-2.5">
         <AnimatePresence initial={false}>
-          {studyNotes.map((note, index) => (
+          {notes.map((note, index) => (
             <motion.div
               key={note.id}
               initial={{ opacity: 0, y: 8 }}
@@ -72,7 +95,7 @@ const StudyTasks = ({ notes, onToggle }) => {
               className={`group rounded-lg p-3 border transition-all duration-200 ${
                 note.completed
                   ? "bg-gray-50 border-gray-100 opacity-50"
-                  : "bg-violet-50/60 border-violet-200/50 hover:border-violet-300/70 hover:shadow-sm"
+                  : CATEGORY_COLORS[note.category] || "bg-violet-50/60 border-violet-200/50 hover:border-violet-300/70 hover:shadow-sm"
               }`}
             >
               <div className="flex items-start gap-2">
@@ -122,4 +145,4 @@ const StudyTasks = ({ notes, onToggle }) => {
   );
 };
 
-export default StudyTasks;
+export default TaskList;

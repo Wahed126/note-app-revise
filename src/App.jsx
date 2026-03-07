@@ -4,7 +4,7 @@ import NoteForm from "./components/NoteForm";
 import Sidebar from "./components/Sidebar";
 import DateTimeDisplay from "./components/DateTimeDisplay";
 import Copyright from "./components/Copyright";
-import StudyTasks from "./components/StudyTasks";
+import TaskList from "./components/TaskList";
 
 const STORAGE_KEY = "note-app-tasks";
 
@@ -20,6 +20,7 @@ const loadNotes = () => {
 const App = () => {
   const [notes, setNotes] = useState(loadNotes);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [mainCategory, setMainCategory] = useState('All');
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
@@ -61,7 +62,7 @@ const App = () => {
 
         {/* Main content */}
         <div className="flex-1 bg-white p-6 flex flex-col min-w-0">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-200">
             <button
               onClick={() => setSidebarOpen((prev) => !prev)}
               className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition cursor-pointer shrink-0"
@@ -81,12 +82,30 @@ const App = () => {
                 </svg>
               )}
             </button>
-            <div className="flex-1">
-              <Header title="My ToDos" />
-            </div>
+            <Header title="My ToDos" className="border-b-0 pb-0" />
           </div>
           <NoteForm onAdd={addNote} />
-          <StudyTasks notes={notes} onToggle={toggleNote} />
+          <hr className="my-4 border-gray-200" />
+          <div>
+            <label htmlFor="main-category-select" className="text-xs text-gray-500 mr-2">Select a category:</label>
+            <select
+              id="main-category-select"
+              value={mainCategory}
+              onChange={e => setMainCategory(e.target.value)}
+              className="text-xs rounded-md border border-gray-300 px-2 py-1 focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+            >
+              <option value="All">All</option>
+              <option value="Personal">Personal</option>
+              <option value="Work">Work</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Health">Health</option>
+              <option value="Study">Study</option>
+            </select>
+          </div>
+          <TaskList
+            notes={mainCategory === 'All' ? notes : notes.filter(n => n.category === mainCategory)}
+            onToggle={toggleNote}
+          />
           <div className="mt-auto pt-6">
             <DateTimeDisplay />
             <div className="mt-4">
